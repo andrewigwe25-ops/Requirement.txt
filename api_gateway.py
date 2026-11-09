@@ -1,10 +1,10 @@
-import asyncio
-import json
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import asyncio
+import json
 
-app = FastAPI(title="Argzeonax AI // Live Core Matrix", version="1.0")
+app = FastAPI(title="Argzeonax AI", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,25 +14,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class DirectivePayload(BaseModel):
-    macro_objective: str
+class DirectiveCommand(BaseModel):
+    directive: str
 
 @app.get("/")
-async def root():
-    return {
-        "system": "Argzeonax AI",
-        "status": "ONLINE",
-        "message": "Planetary matrix is live and operational."
-    }
+def home():
+    return {"system": "Argzeonax AI", "status": "ONLINE", "message": "Sovereign matrix core is fully active."}
 
 @app.post("/api/execute")
-async def execute_objective(payload: DirectivePayload):
+async def execute_directive(payload: DirectiveCommand):
+    # Simulate advanced matrix intelligence processing
+    directive_text = payload.directive
+    await asyncio.sleep(1) # Processing delay
     return {
-        "status": "ARGZEONAX_EXECUTION_SUCCESSFUL",
-        "directive": payload.macro_objective,
-        "subsumed_models_engaged": ["Frontier_LLM_Ensemble", "PINN_Physics_Engine", "GNN_Materials"],
-        "pillars_synchronized": ["Energy", "Industrial", "Mobility", "Health", "Space"],
-        "message": "Directive processed successfully by the live matrix."
+        "status": "SUCCESS",
+        "directive_received": directive_text,
+        "matrix_response": f"Macro objective analyzed. Sub-routine vectors deployed for: '{directive_text}'. Grid optimization protocols engaged.",
+        "security_clearance": "SOVEREIGN_ROOT"
     }
 
 @app.websocket("/ws/telemetry")
@@ -40,14 +38,15 @@ async def websocket_telemetry(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            live_telemetry_packet = {
-                "system_name": "Argzeonax AI",
-                "energy_stability_index": 0.9999,
-                "active_foundries": 1024,
-                "active_edge_nodes": 2500432,
-                "matrix_status": "NOMINAL"
+            telemetry_data = {
+                "status": "STABLE",
+                "grid_stability": 99.4,
+                "active_foundries": 142,
+                "edge_nodes": 8560,
+                "core_load_percent": 18.2
             }
-            await websocket.send_text(json.dumps(live_telemetry_packet))
-            await asyncio.sleep(2.0)
+            await websocket.send_text(json.dumps(telemetry_data))
+            await asyncio.sleep(2)
     except WebSocketDisconnect:
-        print("Telemetry client disconnected.")
+        pass
+
