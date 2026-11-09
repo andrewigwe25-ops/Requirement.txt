@@ -1,5 +1,4 @@
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,45 +6,73 @@
     <title>Argzeonax AI - Sovereign Matrix Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-mono min-h-screen p-6">
+<body class="bg-slate-950 text-slate-100 font-mono min-h-screen p-4 sm:p-6">
     <div class="max-w-4xl mx-auto space-y-6">
         
         <!-- Header -->
-        <header class="border-b border-slate-800 pb-4">
-            <h1 class="text-2xl font-bold tracking-wider text-cyan-400">Argzeonax AI</h1>
-            <p class="text-xs text-slate-500 uppercase">Sovereign Planetary Intelligence Matrix</p>
+        <header class="border-b border-slate-800 pb-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold tracking-wider text-cyan-400">Argzeonax AI</h1>
+                <p class="text-xs text-slate-500 uppercase">Sovereign Planetary Intelligence Matrix v2.0</p>
+            </div>
+            <div class="text-xs bg-cyan-950/50 border border-cyan-800/60 text-cyan-300 px-3 py-1.5 rounded-full">
+                ● CORE ACTIVE
+            </div>
         </header>
 
-        <!-- Telemetry Feed -->
+        <!-- Expanded Telemetry Feed -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Matrix Telemetry Feed</h3>
-            <div id="telemetry" class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-sm border border-slate-800/60">
-                Connecting to WebSocket core...
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Enhanced Matrix Telemetry Feed</h3>
+            <div id="telemetry" class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-xs sm:text-sm border border-slate-800/60 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                Connecting to telemetry core...
             </div>
         </section>
 
-        <!-- Command Execution -->
+        <!-- Command Execution & Quick Macros -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
             <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Command Macro Directive</h3>
+            
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="setMacro('Optimize regional power grids and scale aerospace manufacturing')" class="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-md transition-colors">
+                    ⚡ Grid & Aero Optimize
+                </button>
+                <button onclick="setMacro('Calibrate quantum entanglement matrices and deploy firewall sub-routines')" class="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-md transition-colors">
+                    🛡️ Quantum Firewall
+                </button>
+                <button onclick="setMacro('Synchronize orbital satellite arrays and purge redundant cache nodes')" class="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-md transition-colors">
+                    🛰️ Satellite Sync
+                </button>
+            </div>
+
             <textarea id="directiveInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors">Optimize regional power grids and scale aerospace manufacturing</textarea>
             <button onclick="executeDirective()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 px-4 rounded-lg text-sm transition-colors tracking-wide shadow-md">
                 Execute Directive
             </button>
         </section>
 
-        <!-- System Response Logs -->
+        <!-- System Response Logs & History -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">System Response Logs</h3>
-            <pre id="output" class="bg-slate-950 border border-slate-800/60 p-4 rounded-lg text-xs text-cyan-300 whitespace-pre-wrap min-h-[100px]">System ready. Awaiting input...</pre>
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">System Response & History Logs</h3>
+                <button onclick="clearLogs()" class="text-xs text-slate-500 hover:text-slate-300 underline">Clear Logs</button>
+            </div>
+            <pre id="output" class="bg-slate-950 border border-slate-800/60 p-4 rounded-lg text-xs text-cyan-300 whitespace-pre-wrap max-h-[300px] overflow-y-auto">System ready. Awaiting input...</pre>
         </section>
 
     </div>
 
     <script>
-        // Live Render Backend URL
         const API_URL = "https://requirement-txt-aq56.onrender.com";
 
-        // Connect to Live WebSocket Telemetry with secure wss:// protocol
+        function setMacro(text) {
+            document.getElementById('directiveInput').value = text;
+        }
+
+        function clearLogs() {
+            document.getElementById('output').innerText = "Logs cleared. Awaiting input...";
+        }
+
         function connectWebSocket() {
             const wsProtocol = API_URL.startsWith("https") ? "wss://" : "ws://";
             const cleanUrl = API_URL.replace("https://", "").replace("http://", "");
@@ -54,24 +81,27 @@
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 document.getElementById('telemetry').innerHTML = `
-                    Status: ${data.status} | 
-                    Grid Stability: ${(data.energy_stability_index * 100).toFixed(2)}% | 
-                    Active Foundries: ${data.active_foundries} | 
-                    Edge Nodes: ${data.active_edge_nodes}
+                    <div>Status: <span class="text-white">${data.status}</span></div>
+                    <div>Grid Stability: <span class="text-white">${(data.energy_stability_index * 100).toFixed(2)}%</span></div>
+                    <div>Active Foundries: <span class="text-white">${data.active_foundries}</span></div>
+                    <div>Active Edge Nodes: <span class="text-white">${data.active_edge_nodes}</span></div>
+                    <div>Neural Load: <span class="text-white">${data.neural_load_pct}%</span></div>
+                    <div>Satellite Sync: <span class="text-white">${data.satellite_sync_rate}</span></div>
+                    <div class="sm:col-span-2">Quantum Core Temp: <span class="text-white">${data.quantum_core_temp}</span></div>
                 `;
             };
 
             ws.onclose = () => {
-                setTimeout(connectWebSocket, 3000); // Reconnect automatically if dropped
+                setTimeout(connectWebSocket, 3000);
             };
         }
 
-        // Execute Command Directive via POST API
         async function executeDirective() {
             const directiveText = document.getElementById('directiveInput').value;
             const outputLog = document.getElementById('output');
             
-            outputLog.innerText = "Transmitting directive to sovereign matrix core...";
+            const timestamp = new Date().toLocaleTimeString();
+            outputLog.innerText = `[${timestamp}] Transmitting directive to sovereign matrix core...\n\n` + outputLog.innerText;
 
             try {
                 const response = await fetch(`${API_URL}/api/execute`, {
@@ -81,15 +111,14 @@
                 });
 
                 const result = await response.json();
-                outputLog.innerText = JSON.stringify(result, null, 2);
+                const formattedResult = JSON.stringify(result, null, 2);
+                outputLog.innerText = `[${timestamp}] RESPONSE:\n${formattedResult}\n----------------------------------------\n\n` + outputLog.innerText;
             } catch (error) {
-                outputLog.innerText = `ERROR: Failed to reach backend core.\nDetails: ${error}`;
+                outputLog.innerText = `[${timestamp}] ERROR: Failed to reach backend core.\nDetails: ${error}\n\n` + outputLog.innerText;
             }
         }
 
-        // Initialize telemetry connection on page load
         connectWebSocket();
     </script>
 </body>
 </html>
-
