@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -23,9 +24,8 @@ def home():
 
 @app.post("/api/execute")
 async def execute_directive(payload: DirectiveCommand):
-    # Simulate advanced matrix intelligence processing
     directive_text = payload.directive
-    await asyncio.sleep(1) # Processing delay
+    await asyncio.sleep(1)
     return {
         "status": "SUCCESS",
         "directive_received": directive_text,
@@ -40,9 +40,9 @@ async def websocket_telemetry(websocket: WebSocket):
         while True:
             telemetry_data = {
                 "status": "STABLE",
-                "grid_stability": 99.4,
+                "energy_stability_index": 0.994,
                 "active_foundries": 142,
-                "edge_nodes": 8560,
+                "active_edge_nodes": 8560,
                 "core_load_percent": 18.2
             }
             await websocket.send_text(json.dumps(telemetry_data))
