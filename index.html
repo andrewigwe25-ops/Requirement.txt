@@ -3,129 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Energy Network (UEN) - Sovereign Core OS</title>
+    <title>Universal Energy Network (UEN) | Sovereign Energy OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        code, .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.15);
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-mono min-h-screen p-4 sm:p-6">
-    <div class="max-w-5xl mx-auto space-y-6">
+<body class="bg-[#030712] text-slate-100 min-h-screen selection:bg-cyan-500 selection:text-slate-950">
+
+    <!-- Ambient Background Glows -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 relative z-10">
         
-        <!-- Header -->
-        <header class="border-b border-slate-800 pb-4 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold tracking-wider text-cyan-400">Universal Energy Network</h1>
-                <p class="text-xs text-slate-500 uppercase">UEN v3.1.0-Enterprise • Connecting the World's Energy Resources</p>
+        <!-- Navigation / Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-800/80">
+            <div class="space-y-1">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_12px_#22d3ee]"></span>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Universal Energy Network</h1>
+                    <span class="text-[10px] mono bg-cyan-950/80 border border-cyan-700/50 text-cyan-300 px-2.5 py-0.5 rounded-full">v3.1.0-Enterprise</span>
+                </div>
+                <p class="text-xs text-slate-400">Sovereign Intelligence & Multi-Carrier Resource Coordination Layer</p>
             </div>
-            <div class="text-xs bg-cyan-950/50 border border-cyan-800/60 text-cyan-300 px-3 py-1.5 rounded-full flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> GLOBAL MATRIX ACTIVE
+            <div class="flex items-center gap-3 text-xs mono">
+                <div class="glass-panel px-3 py-1.5 rounded-lg text-slate-300 flex items-center gap-2">
+                    <span class="text-slate-500">Node Status:</span> <span class="text-emerald-400 font-semibold">SYNCHRONIZED</span>
+                </div>
+                <div class="glass-panel px-3 py-1.5 rounded-lg text-slate-300 flex items-center gap-2">
+                    <span class="text-slate-500">Security:</span> <span class="text-cyan-400 font-semibold">SOVEREIGN_ROOT</span>
+                </div>
             </div>
         </header>
 
-        <!-- Telemetry Feed -->
-        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Global Telemetry Stream & Edge Sync</h3>
-            <div id="telemetry" class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-xs sm:text-sm border border-slate-800/60 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                Connecting to UEN telemetry core...
+        <!-- Live Telemetry Grid -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-panel p-5 rounded-2xl glow-cyan space-y-2">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Grid Stability Index</p>
+                <div class="flex items-baseline justify-between">
+                    <span id="telStability" class="text-2xl sm:text-3xl font-bold text-cyan-400 mono">99.84%</span>
+                    <span class="text-[10px] text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-800/40">+0.04%</span>
+                </div>
+                <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-cyan-400 h-full w-[99.84%]"></div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl space-y-2">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Active Edge Nodes</p>
+                <div class="flex items-baseline justify-between">
+                    <span id="telNodes" class="text-2xl sm:text-3xl font-bold text-white mono">172</span>
+                    <span class="text-[10px] text-cyan-300 mono">Federated</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Autonomous microgrids online</p>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl space-y-2">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Resource Passports</p>
+                <div class="flex items-baseline justify-between">
+                    <span id="telPassports" class="text-2xl sm:text-3xl font-bold text-white mono">3</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-950/50 px-2 py-0.5 rounded border border-purple-800/40">Multi-Carrier</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Electricity, Thermal, Hydrogen</p>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl space-y-2">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Active Exchange Matches</p>
+                <div class="flex items-baseline justify-between">
+                    <span id="telMatches" class="text-2xl sm:text-3xl font-bold text-white mono">0</span>
+                    <span class="text-[10px] text-cyan-300 mono">Atomic Locked</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Concurrency-safe ledger</p>
             </div>
         </section>
 
-        <!-- Grid Layout for Passports & Exchange -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Main Interaction Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Universal Resource Passport Registration -->
-            <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
-                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Register Resource Passport</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-xs text-slate-400">Resource ID</label>
-                        <input type="text" id="passId" value="RES-ELEC-NG-04" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
+            <!-- Left Column: Passport & Order Creation (6 cols) -->
+            <div class="lg:col-span-6 space-y-6">
+                
+                <!-- Passport Registration Card -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200">Universal Resource Passport</h3>
+                        <span class="text-[10px] mono text-slate-400">ISO-EN-9001 Standard</span>
                     </div>
-                    <div>
-                        <label class="text-xs text-slate-400">Asset Name</label>
-                        <input type="text" id="passName" value="Kano Hybrid Solar Microgrid" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs text-slate-400">Energy Carrier</label>
-                            <select id="passCarrier" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
-                                <option value="electricity">Electricity</option>
-                                <option value="thermal">Thermal</option>
-                                <option value="hydrogen">Hydrogen</option>
+                            <label class="text-[11px] text-slate-400">Resource ID</label>
+                            <input type="text" id="passId" value="RES-ELEC-NG-04" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500 mono">
+                        </div>
+                        <div>
+                            <label class="text-[11px] text-slate-400">Asset Name</label>
+                            <input type="text" id="passName" value="Kano Microgrid Hub" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[11px] text-slate-400">Energy Carrier</label>
+                            <select id="passCarrier" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500">
+                                <option value="electricity">Electricity (MW)</option>
+                                <option value="thermal">Thermal (MWth)</option>
+                                <option value="hydrogen">Hydrogen (MWh2)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs text-slate-400">Capacity (MW)</label>
-                            <input type="number" id="passCap" value="18.5" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
+                            <label class="text-[11px] text-slate-400">Capacity</label>
+                            <input type="number" id="passCap" value="25.0" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500 mono">
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400">Geographic Location</label>
-                        <input type="text" id="passLoc" value="Kano, Nigeria" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
+                        <label class="text-[11px] text-slate-400">Geographic Location</label>
+                        <input type="text" id="passLoc" value="Kano, Nigeria" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500">
                     </div>
-                    <button onclick="registerPassport()" class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold py-2.5 px-3 rounded-lg text-xs transition-colors border border-slate-700">
+                    <button onclick="registerPassport()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs transition-all shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                         Mint Resource Passport
                     </button>
                 </div>
-            </section>
 
-            <!-- Exchange & Matching Panel -->
-            <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Energy Exchange & Matching</h3>
-                    <div class="space-y-3 mt-3">
+                <!-- Exchange & Matching Card -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200">Energy Exchange Ledger</h3>
+                        <span class="text-[10px] mono text-slate-400">Atomic Matching Engine</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs text-slate-400">Order Type</label>
-                            <select id="orderType" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
+                            <label class="text-[11px] text-slate-400">Order Intent</label>
+                            <select id="orderType" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500">
                                 <option value="SUPPLY">SUPPLY (Generation / Storage)</option>
                                 <option value="DEMAND">DEMAND (Required Allocation)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs text-slate-400">Resource ID Reference</label>
-                            <input type="text" id="orderResource" value="RES-ELEC-NG-01" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400">Quantity (MW)</label>
-                            <input type="number" id="orderMw" value="10.0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 mt-1">
+                            <label class="text-[11px] text-slate-400">Target Resource ID</label>
+                            <input type="text" id="orderResource" value="RES-ELEC-NG-01" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500 mono">
                         </div>
                     </div>
+                    <div>
+                        <label class="text-[11px] text-slate-400">Allocation Quantity (MW)</label>
+                        <input type="number" id="orderMw" value="10.0" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mt-1 focus:outline-none focus:border-cyan-500 mono">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <button onclick="submitOrder()" class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-300 font-semibold py-3 px-4 rounded-xl text-xs transition-all border border-slate-700">
+                            Submit Order
+                        </button>
+                        <button onclick="executeMatching()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-xl text-xs transition-all shadow-[0_0_15px_rgba(8,145,178,0.3)]">
+                            Run Exchange Match
+                        </button>
+                    </div>
                 </div>
-                <div class="space-y-2 pt-3">
-                    <button onclick="submitOrder()" class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold py-2.5 px-3 rounded-lg text-xs transition-colors border border-slate-700">
-                        Submit Order to Ledger
-                    </button>
-                    <button onclick="executeMatching()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 px-4 rounded-lg text-xs transition-colors tracking-wide shadow-md">
-                        Run Concurrency-Safe Matching
+
+            </div>
+
+            <!-- Right Column: Directives & System Audit Logs (6 cols) -->
+            <div class="lg:col-span-6 space-y-6 flex flex-col">
+                
+                <!-- Command Directive Console -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200">Sovereign Intelligence Console</h3>
+                        <span class="text-[10px] mono text-cyan-400">Physics-Aware Validation</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setMacro('Optimize regional microgrid networks and scale industrial exchange')" class="text-[11px] bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg transition-colors">
+                            ⚡ Grid Optimize
+                        </button>
+                        <button onclick="setMacro('Calibrate quantum entanglement matrices and deploy firewall sub-routines')" class="text-[11px] bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg transition-colors">
+                            🛡️ Quantum Firewall
+                        </button>
+                    </div>
+                    <textarea id="directiveInput" rows="2" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 mono">Optimize regional microgrid networks and scale industrial exchange</textarea>
+                    <button onclick="executeDirective()" class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-300 font-semibold py-3 px-4 rounded-xl text-xs transition-all border border-slate-700">
+                        Execute Security Clearance
                     </button>
                 </div>
-            </section>
+
+                <!-- System Audit & Response Ledger -->
+                <div class="glass-panel p-6 rounded-2xl space-y-3 flex-1 flex flex-col">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200">System Audit Ledger</h3>
+                        <button onclick="clearLogs()" class="text-xs text-slate-500 hover:text-slate-300 underline">Clear Stream</button>
+                    </div>
+                    <pre id="output" class="flex-1 bg-[#010409] border border-slate-900 p-4 rounded-xl text-[11px] text-cyan-400 mono whitespace-pre-wrap max-h-[300px] overflow-y-auto leading-relaxed">UEN v3.1.0-Enterprise core initialized.
+Secure sovereign communication channel established. Awaiting directive...</pre>
+                </div>
+
+            </div>
 
         </div>
-
-        <!-- Command Execution & Quick Macros -->
-        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Command Macro Directive</h3>
-            <div class="flex flex-wrap gap-2">
-                <button onclick="setMacro('Optimize regional microgrid networks and scale industrial exchange')" class="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-md">
-                    ⚡ Grid Optimize
-                </button>
-                <button onclick="setMacro('Calibrate quantum entanglement matrices and deploy firewall sub-routines')" class="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-md">
-                    🛡️ Quantum Firewall
-                </button>
-            </div>
-            <textarea id="directiveInput" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500">Optimize regional microgrid networks and scale industrial exchange</textarea>
-            <button onclick="executeDirective()" class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold py-2.5 px-4 rounded-lg text-xs transition-colors tracking-wide border border-slate-700">
-                Execute Directive Clearance
-            </button>
-        </section>
-
-        <!-- System Response Logs -->
-        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">System Response & Audit Ledger</h3>
-                <button onclick="clearLogs()" class="text-xs text-slate-500 hover:text-slate-300 underline">Clear Logs</button>
-            </div>
-            <pre id="output" class="bg-slate-950 border border-slate-800/60 p-4 rounded-lg text-xs text-cyan-300 whitespace-pre-wrap max-h-[250px] overflow-y-auto">UEN v3.1.0 Enterprise Core initialized. Awaiting directive...</pre>
-        </section>
 
     </div>
 
@@ -137,31 +215,7 @@
         }
 
         function clearLogs() {
-            document.getElementById('output').innerText = "Logs cleared. Awaiting input...";
-        }
-
-        function connectWebSocket() {
-            const wsProtocol = API_URL.startsWith("https") ? "wss://" : "ws://";
-            const cleanUrl = API_URL.replace("https://", "").replace("http://", "");
-            const ws = new WebSocket(`${wsProtocol}${cleanUrl}/ws/telemetry`);
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                document.getElementById('telemetry').innerHTML = `
-                    <div>Status: <span class="text-white">${data.status}</span></div>
-                    <div>Stability: <span class="text-white">${(data.energy_stability_index * 100).toFixed(2)}%</span></div>
-                    <div>Edge Nodes: <span class="text-white">${data.active_edge_nodes}</span></div>
-                    <div>Neural Load: <span class="text-white">${data.neural_load_pct}%</span></div>
-                    <div>Satellite Sync: <span class="text-white">${data.satellite_sync_rate}</span></div>
-                    <div>Core Temp: <span class="text-white">${data.quantum_core_temp}</span></div>
-                    <div>Passports: <span class="text-white">${data.registered_passports}</span></div>
-                    <div>Active Matches: <span class="text-white">${data.active_matches}</span></div>
-                `;
-            };
-
-            ws.onclose = () => {
-                setTimeout(connectWebSocket, 3000);
-            };
+            document.getElementById('output').innerText = "Stream cleared. Ready for input...";
         }
 
         async function registerPassport() {
@@ -182,9 +236,9 @@
                     body: JSON.stringify(payload)
                 });
                 const result = await response.json();
-                outputLog.innerText = `PASSPORT MINTED:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[PASSPORT_MINTED] SUCCESS:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
             } catch (error) {
-                outputLog.innerText = `ERROR minting passport: ${error}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[ERROR] Failed to mint passport: ${error}\n\n` + outputLog.innerText;
             }
         }
 
@@ -195,7 +249,7 @@
                 order_type: document.getElementById('orderType').value,
                 energy_carrier: "electricity",
                 quantity_mw: parseFloat(document.getElementById('orderMw').value),
-                price_per_mw_usd: 110.0
+                price_per_mw_usd: 115.0
             };
 
             try {
@@ -205,9 +259,9 @@
                     body: JSON.stringify(payload)
                 });
                 const result = await response.json();
-                outputLog.innerText = `EXCHANGE ORDER LOGGED:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[EXCHANGE_ORDER] REGISTERED:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
             } catch (error) {
-                outputLog.innerText = `ERROR submitting order: ${error}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[ERROR] Failed order registration: ${error}\n\n` + outputLog.innerText;
             }
         }
 
@@ -216,9 +270,9 @@
             try {
                 const response = await fetch(`${API_URL}/api/exchange/match`, { method: 'POST' });
                 const result = await response.json();
-                outputLog.innerText = `MATCHING ENGINE EXECUTION:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[MATCHING_ENGINE] EXECUTED:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
             } catch (error) {
-                outputLog.innerText = `ERROR running matching engine: ${error}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[ERROR] Matching execution failed: ${error}\n\n` + outputLog.innerText;
             }
         }
 
@@ -233,13 +287,11 @@
                     body: JSON.stringify({ directive: directiveText })
                 });
                 const result = await response.json();
-                outputLog.innerText = `DIRECTIVE RESPONSE:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[DIRECTIVE_RESPONSE]:\n${JSON.stringify(result, null, 2)}\n\n` + outputLog.innerText;
             } catch (error) {
-                outputLog.innerText = `ERROR: ${error}\n\n` + outputLog.innerText;
+                outputLog.innerText = `[ERROR] Directive dispatch failed: ${error}\n\n` + outputLog.innerText;
             }
         }
-
-        connectWebSocket();
     </script>
 </body>
 </html>
