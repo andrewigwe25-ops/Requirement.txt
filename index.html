@@ -1,42 +1,51 @@
-<!DOCTYPE html>
+
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Argzeonax AI // Live Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Argzeonax AI - Sovereign Matrix Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-6 font-sans">
-    <div class="max-w-xl mx-auto space-y-6">
-        <div>
-            <h1 class="text-2xl font-bold text-cyan-400">Argzeonax AI</h1>
-            <p class="text-xs text-slate-400">Sovereign Planetary Intelligence Matrix</p>
-        </div>
+<body class="bg-slate-950 text-slate-100 font-mono min-h-screen p-6">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="border-b border-slate-800 pb-4">
+            <h1 class="text-2xl font-bold tracking-wider text-cyan-400">Argzeonax AI</h1>
+            <p class="text-xs text-slate-500 uppercase">Sovereign Planetary Intelligence Matrix</p>
+        </header>
 
-        <!-- Live Telemetry Card -->
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
-            <h2 class="text-xs font-semibold text-cyan-500 uppercase tracking-wider">Matrix Telemetry Feed</h2>
-            <div id="telemetry" class="text-xs font-mono text-slate-300">Connecting to WebSocket core...</div>
-        </div>
+        <!-- Telemetry Feed -->
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Matrix Telemetry Feed</h3>
+            <div id="telemetry" class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-sm border border-slate-800/60">
+                Connecting to WebSocket core...
+            </div>
+        </section>
 
-        <!-- Command Section -->
-        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
-            <h2 class="text-sm font-semibold text-slate-300">Command Macro Directive</h2>
-            <textarea id="objective" rows="3" placeholder="e.g., Optimize regional power grids and scale aerospace manufacturing..." class="w-full bg-slate-950 p-3 rounded border border-slate-800 text-sm text-white focus:outline-none focus:border-cyan-500"></textarea>
-            <button onclick="executeDirective()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold p-3 rounded text-sm transition-all">Execute Directive</button>
-        </div>
+        <!-- Command Execution -->
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Command Macro Directive</h3>
+            <textarea id="directiveInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors">Optimize regional power grids and scale aerospace manufacturing</textarea>
+            <button onclick="executeDirective()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 px-4 rounded-lg text-sm transition-colors tracking-wide shadow-md">
+                Execute Directive
+            </button>
+        </section>
 
-        <!-- Output Log -->
-        <div class="space-y-2">
-            <h3 class="text-xs font-semibold text-slate-400">System Response Logs</h3>
-            <pre id="output" class="bg-slate-900 p-4 rounded text-xs text-cyan-300 font-mono overflow-auto h-48 border border-slate-800">System ready. Awaiting input...</pre>
-        </div>
+        <!-- System Response Logs -->
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-3">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">System Response Logs</h3>
+            <pre id="output" class="bg-slate-950 border border-slate-800/60 p-4 rounded-lg text-xs text-cyan-300 whitespace-pre-wrap min-h-[100px]">System ready. Awaiting input...</pre>
+        </section>
+
     </div>
 
     <script>
-        // REPLACE THIS WITH YOUR LIVE RENDER URL FROM RENDER DASHBOARD
-        ==> Available at your primary URL https://requirement-txt-aq56.onrender.com
+        // Live Render Backend URL
+        const API_URL = "https://requirement-txt-aq56.onrender.com";
 
-        // Connect to Live WebSocket Telemetry
+        // Connect to Live WebSocket Telemetry with secure wss:// protocol
         function connectWebSocket() {
             const wsProtocol = API_URL.startsWith("https") ? "wss://" : "ws://";
             const cleanUrl = API_URL.replace("https://", "").replace("http://", "");
@@ -45,6 +54,7 @@
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 document.getElementById('telemetry').innerHTML = `
+                    Status: ${data.status} | 
                     Grid Stability: ${(data.energy_stability_index * 100).toFixed(2)}% | 
                     Active Foundries: ${data.active_foundries} | 
                     Edge Nodes: ${data.active_edge_nodes}
@@ -55,28 +65,31 @@
                 setTimeout(connectWebSocket, 3000); // Reconnect automatically if dropped
             };
         }
-        connectWebSocket();
 
-        // Execute AI Directive
+        // Execute Command Directive via POST API
         async function executeDirective() {
-            const objective = document.getElementById('objective').value;
-            if (!objective) return alert("Please enter a directive.");
-
-            document.getElementById('output').innerText = "Processing directive across matrix pillars...";
+            const directiveText = document.getElementById('directiveInput').value;
+            const outputLog = document.getElementById('output');
+            
+            outputLog.innerText = "Transmitting directive to sovereign matrix core...";
 
             try {
-                const res = await fetch(`${API_URL}/api/execute`, {
+                const response = await fetch(`${API_URL}/api/execute`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ macro_objective: objective })
+                    body: JSON.stringify({ directive: directiveText })
                 });
-                const data = await res.json();
-                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-            } catch (err) {
-                document.getElementById('output').innerText = "Error connecting to backend matrix: " + err;
+
+                const result = await response.json();
+                outputLog.innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                outputLog.innerText = `ERROR: Failed to reach backend core.\nDetails: ${error}`;
             }
         }
+
+        // Initialize telemetry connection on page load
+        connectWebSocket();
     </script>
 </body>
-              </html>
-  
+</html>
+
