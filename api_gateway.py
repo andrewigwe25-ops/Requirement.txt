@@ -193,3 +193,45 @@ async def websocket_telemetry(websocket: WebSocket):
             await asyncio.sleep(2)
     except WebSocketDisconnect:
         pass
+from fastapi import FastAPI, Header, HTTPException, Depends
+from pydantic import BaseModel
+from typing import Optional
+
+app = FastAPI(
+    title="Universal Energy Network (UEN) Platform",
+    version="4.0.0-Enterprise",
+    description="Global Energy Intelligence, Interoperable Exchange & Autonomous Edge Operating System"
+)
+
+class ExternalOrderRequest(BaseModel):
+    resource_id: str
+    order_type: str  # SUPPLY or DEMAND
+    energy_carrier: str  # electricity, thermal, hydrogen
+    quantity_mw: float
+    price_per_mw_usd: float
+    digital_signature: str
+
+# Simulated API Key validation for multi-organisation support
+VALID_PARTNER_KEYS = {
+    "uen_live_lagos_solar_9921": "Lagos Solar Corp",
+    "uen_live_industrial_ng_8843": "Pan-African Industrial Grid"
+}
+
+def verify_partner_api_key(x_api_key: Optional[str] = Header(None)):
+    if x_api_key not in VALID_PARTNER_KEYS:
+        raise HTTPException(status_code=401, detail="Invalid or missing UEN Enterprise API Key.")
+    return VALID_PARTNER_KEYS[x_api_key]
+
+@app.post("/api/v4/exchange/external-orders")
+def submit_external_partner_order(order: ExternalOrderRequest, partner_name: str = Depends(verify_partner_api_key)):
+    """
+    v4.0 External Developer API Endpoint for Multi-Organisation Asset Integration.
+    """
+    return {
+        "status": "ACCEPTED_BY_UEN_CORE",
+        "authenticated_partner": partner_name,
+        "processed_resource": order.resource_id,
+        "carrier": order.energy_carrier,
+        "allocated_quantity_mw": order.quantity_mw,
+        "platform_version": "v4.0"
+    }
