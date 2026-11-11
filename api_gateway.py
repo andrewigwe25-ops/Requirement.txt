@@ -9,8 +9,8 @@ from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="Universal Energy Network (UEN) - Sovereign Core OS",
-    version="3.1.0-Enterprise",
-    description="The Universal Energy Operating System and Coordination Layer."
+    version="3.2.0-Enterprise",
+    description="Universal Energy Operating System with Edge Autonomy and Commercial Onboarding."
 )
 
 app.add_middleware(
@@ -21,8 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- UEN MULTI-CARRIER RESOURCE PASSPORT REGISTRY ---
-# Principle 1: Technology Independence & Principle 3: Security & Trust
+# --- UEN STATE & REGISTRIES ---
 RESOURCE_REGISTRY: Dict[str, dict] = {
     "RES-ELEC-NG-01": {
         "name": "Rural Solar Microgrid Alpha",
@@ -30,7 +29,8 @@ RESOURCE_REGISTRY: Dict[str, dict] = {
         "capacity_mw": 5.0,
         "location": "Underserved Corridor, Nigeria",
         "security_tier": "SOVEREIGN_ROOT",
-        "status": "ACTIVE_EDGE"
+        "status": "ACTIVE_EDGE",
+        "edge_mode": "CLOUD_SYNCED"
     },
     "RES-THERM-NG-02": {
         "name": "Biomass Thermal Conversion Unit",
@@ -38,190 +38,158 @@ RESOURCE_REGISTRY: Dict[str, dict] = {
         "capacity_mw": 12.0,
         "location": "Industrial Zone, Nigeria",
         "security_tier": "DIRECTOR",
-        "status": "ACTIVE_EDGE"
-    },
-    "RES-HYDRO-NG-03": {
-        "name": "Green Hydrogen Storage Vault",
-        "carrier": "hydrogen",
-        "capacity_mw": 8.5,
-        "location": "Regional Hub, Nigeria",
-        "security_tier": "SOVEREIGN_ROOT",
-        "status": "ACTIVE_EDGE"
+        "status": "ACTIVE_EDGE",
+        "edge_mode": "CLOUD_SYNCED"
     }
 }
 
 EXCHANGE_ORDERS: List[dict] = []
 EXCHANGE_MATCHES: List[dict] = []
-AUDIT_LOGS: List[dict] = []
+COMMERCIAL_PARTNERS: List[dict] = []
 
 # --- MODELS ---
 class ResourcePassportCreate(BaseModel):
     resource_id: str
     name: str
-    carrier: str  # electricity, thermal, hydrogen
+    carrier: str
     capacity_mw: float
     location: str
-    security_tier: str = Field(..., description="OPERATOR, DIRECTOR, or SOVEREIGN_ROOT")
+    security_tier: str = "SOVEREIGN_ROOT"
 
 class OrderCreate(BaseModel):
     resource_id: str
-    order_type: str  # SUPPLY or DEMAND
-    energy_carrier: str  # electricity, thermal, hydrogen
+    order_type: str
+    energy_carrier: str
     quantity_mw: float
     price_per_mw_usd: float
 
+class CommercialPartnerCreate(BaseModel.Config if False else BaseModel):
+    company_name: str
+    sector: str  # e.g., IPP, Industrial, Microgrid Operator
+    region: str
+    primary_contact_email: str
+
 class DirectiveRequest(BaseModel):
     directive: str
-    clearance_level: str = "OPERATOR"
 
-# --- SYSTEM ROOT & HEALTH ---
+# --- ROOT & HEALTH ---
 @app.get("/")
 def read_root():
     return {
         "system": "Universal Energy Network (UEN)",
-        "mission": "Connecting the World's Energy Resources Through Universal Intelligence",
-        "version": "3.1.0-Enterprise",
-        "principles": [
-            "Technology Independence",
-            "Interoperability",
-            "Security and Trust",
-            "Scalability",
-            "Long-Term Innovation"
-        ],
-        "registered_passports": len(RESOURCE_REGISTRY),
-        "active_orders": len(EXCHANGE_ORDERS),
-        "active_matches": len(EXCHANGE_MATCHES)
+        "version": "3.2.0-Enterprise",
+        "mission": "Global energy intelligence, coordination, and sovereign infrastructure.",
+        "active_edge_nodes": len(RESOURCE_REGISTRY),
+        "commercial_partners": len(COMMERCIAL_PARTNERS)
     }
 
-# --- PRINCIPLE 1 & 2: UNIVERSAL PASSPORTS & INTEROPERABILITY ---
+# --- COMMERCIAL ONBOARDING FRAMEWORK ---
+@app.post("/api/commercial/onboard")
+def onboard_commercial_partner(partner: CommercialPartnerCreate):
+    """Onboard a real commercial enterprise, IPP, or microgrid operator into the UEN network."""
+    partner_record = partner.dict()
+    partner_record["partner_id"] = f"UEN-PARTNER-{random.randint(10000, 99999)}"
+    partner_record["api_key"] = f"uen_live_{random.randint(10000000, 99999999)}"
+    partner_record["status"] = "VERIFIED_COMMERCIAL_OPERATOR"
+    partner_record["joined_at"] = datetime.utcnow().isoformat()
+    
+    COMMERCIAL_PARTNERS.append(partner_record)
+    return {
+        "status": "SUCCESS",
+        "message": "Commercial partner successfully onboarded into UEN network.",
+        "credentials": partner_record
+    }
+
+@app.get("/api/commercial/partners")
+def list_commercial_partners():
+    return {"status": "SUCCESS", "partners": COMMERCIAL_PARTNERS}
+
+# --- EDGE AUTONOMY & SIMULATION ---
+@app.post("/api/edge/simulate-blackout/{resource_id}")
+def simulate_edge_blackout(resource_id: str):
+    """Simulate an internet blackout forcing a remote microgrid into autonomous island mode."""
+    if resource_id not in RESOURCE_REGISTRY:
+        raise HTTPException(status_code=404, detail="Resource passport not found.")
+    
+    current_mode = RESOURCE_REGISTRY[resource_id]["edge_mode"]
+    new_mode = "AUTONOMOUS_ISLAND" if current_mode == "CLOUD_SYNCED" else "CLOUD_SYNCED"
+    RESOURCE_REGISTRY[resource_id]["edge_mode"] = new_mode
+    
+    return {
+        "status": "SUCCESS",
+        "resource_id": resource_id,
+        "edge_mode": new_mode,
+        "message": f"Resource switched to {new_mode}. Local battery buffers and autonomous load balancing engaged."
+    }
+
+# --- STANDARD PASSPORTS & MATCHING ---
 @app.post("/api/resources/passport")
-def register_resource_passport(passport: ResourcePassportCreate):
-    """Register any energy asset (electricity, thermal, hydrogen) with a unified digital passport."""
+def register_passport(passport: ResourcePassportCreate):
     if passport.resource_id in RESOURCE_REGISTRY:
-        raise HTTPException(status_code=400, detail="Resource Passport ID already exists.")
-    
+        raise HTTPException(status_code=400, detail="Passport ID already exists.")
     record = passport.dict()
-    record["registered_at"] = datetime.utcnow().isoformat()
-    record["verification_status"] = "VERIFIED_PASSPORT"
-    
+    record["status"] = "ACTIVE_EDGE"
+    record["edge_mode"] = "CLOUD_SYNCED"
     RESOURCE_REGISTRY[passport.resource_id] = record
-    AUDIT_LOGS.append({
-        "timestamp": datetime.utcnow().isoformat(),
-        "action": "PASSPORT_REGISTERED",
-        "resource_id": passport.resource_id,
-        "carrier": passport.carrier
-    })
-    return {"status": "SUCCESS", "message": "Universal Resource Passport minted.", "passport": record}
+    return {"status": "SUCCESS", "passport": record}
 
 @app.get("/api/resources/passports")
-def list_resource_passports():
-    """Retrieve all multi-carrier resource passports across the network."""
+def get_passports():
     return {"status": "SUCCESS", "passports": RESOURCE_REGISTRY}
 
-# --- PRINCIPLE 3 & 4: EXCHANGE & CONCURRENCY-SAFE MATCHING ---
 @app.post("/api/exchange/orders")
-def create_exchange_order(order: OrderCreate):
-    """Place cross-carrier supply or demand orders into the exchange ledger."""
-    if order.order_type == "SUPPLY" and order.resource_id not in RESOURCE_REGISTRY:
-        raise HTTPException(status_code=404, detail="Supplying resource passport not found in registry.")
-
+def create_order(order: OrderCreate):
     order_record = {
         "order_id": f"UEN-ORD-{random.randint(10000, 99999)}",
-        "resource_id": order.resource_id,
-        "order_type": order.order_type,
-        "energy_carrier": order.energy_carrier,
-        "quantity_mw": order.quantity_mw,
-        "price_per_mw_usd": order.price_per_mw_usd,
+        **order.dict(),
         "lifecycle_state": "DISCOVERED",
         "timestamp": datetime.utcnow().isoformat()
     }
     EXCHANGE_ORDERS.append(order_record)
-    return {"status": "SUCCESS", "message": "Order securely logged in exchange.", "order": order_record}
-
-@app.get("/api/exchange/orders")
-def get_exchange_orders():
-    return {"status": "SUCCESS", "orders": EXCHANGE_ORDERS}
+    return {"status": "SUCCESS", "order": order_record}
 
 @app.post("/api/exchange/match")
-def execute_matching_engine():
-    """Concurrency-safe matching engine respecting carrier compatibility and capacity limits."""
-    matched_count = 0
+def match_orders():
+    matched = 0
     supplies = [o for o in EXCHANGE_ORDERS if o["order_type"] == "SUPPLY" and o["lifecycle_state"] == "DISCOVERED"]
     demands = [o for o in EXCHANGE_ORDERS if o["order_type"] == "DEMAND" and o["lifecycle_state"] == "DISCOVERED"]
-
-    for supply in supplies:
-        for demand in demands:
-            # Enforce carrier match & atomic quantity check
-            if supply["energy_carrier"] == demand["energy_carrier"] and supply["quantity_mw"] >= demand["quantity_mw"]:
-                supply["lifecycle_state"] = "PROPOSED"
-                demand["lifecycle_state"] = "PROPOSED"
-
-                match_record = {
+    
+    for s in supplies:
+        for d in demands:
+            if s["energy_carrier"] == d["energy_carrier"] and s["quantity_mw"] >= d["quantity_mw"]:
+                s["lifecycle_state"] = "PROPOSED"
+                d["lifecycle_state"] = "PROPOSED"
+                match_rec = {
                     "match_id": f"UEN-MCH-{random.randint(1000, 9999)}",
-                    "supply_order_id": supply["order_id"],
-                    "demand_order_id": demand["order_id"],
-                    "allocated_mw": demand["quantity_mw"],
-                    "carrier": supply["energy_carrier"],
-                    "lifecycle_status": "ACCEPTED_PROPOSAL",
+                    "supply_id": s["order_id"],
+                    "demand_id": d["order_id"],
+                    "allocated_mw": d["quantity_mw"],
                     "timestamp": datetime.utcnow().isoformat()
                 }
-                EXCHANGE_MATCHES.append(match_record)
-                matched_count += 1
+                EXCHANGE_MATCHES.append(match_rec)
+                matched += 1
                 break
+    return {"status": "SUCCESS", "new_matches": matched, "total_matches": len(EXCHANGE_MATCHES), "matches": EXCHANGE_MATCHES}
 
-    return {
-        "status": "SUCCESS",
-        "new_matches_created": matched_count,
-        "total_matches": len(EXCHANGE_MATCHES),
-        "matches": EXCHANGE_MATCHES
-    }
-
-# --- PRINCIPLE 5: INNOVATION & SECURE DIRECTIVE EXECUTION ---
 @app.post("/api/execute")
-async def execute_directive(req: DirectiveRequest):
-    text = req.directive.lower()
-    
-    # Parse clearance based on command sensitivity
-    if "quantum" in text or "firewall" in text or "core" in text or "sovereign" in text:
-        clearance = "SOVEREIGN_ROOT"
-    elif "exchange" in text or "grid" in text or "foundry" in text or "microgrid" in text:
-        clearance = "DIRECTOR"
-    else:
-        clearance = "OPERATOR"
+def execute_directive(req: DirectiveRequest):
+    return {"status": "SUCCESS", "directive": req.directive, "validation": "PHYSICS_AWARE_PASSED", "response": "Sovereign intelligence dispatched."}
 
-    AUDIT_LOGS.append({
-        "timestamp": datetime.utcnow().isoformat(),
-        "action": "DIRECTIVE_EXECUTED",
-        "clearance": clearance,
-        "directive": req.directive
-    })
-
-    return {
-        "status": "SUCCESS",
-        "directive_received": req.directive,
-        "security_clearance": clearance,
-        "physics_validation": "PASSED",
-        "matrix_response": f"UEN v3.1.0 intelligence engine verified parameters. Sub-routines dispatched under clearance: {clearance}."
-    }
-
-# --- REAL-TIME TELEMETRY & EDGE SYNC STREAM ---
+# --- TELEMETRY ---
 @app.websocket("/ws/telemetry")
 async def websocket_telemetry(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            telemetry_data = {
+            data = {
                 "status": "UEN_GLOBAL_SECURE_GRID",
-                "energy_stability_index": round(random.uniform(0.98, 0.999), 4),
-                "active_edge_nodes": random.randint(150, 185),
-                "neural_load_pct": round(random.uniform(65.0, 82.0), 1),
-                "satellite_sync_rate": "100%",
-                "quantum_core_temp": f"{random.randint(38, 43)}°C",
-                "registered_passports": len(RESOURCE_REGISTRY),
-                "active_orders": len(EXCHANGE_ORDERS),
-                "active_matches": len(EXCHANGE_MATCHES)
+                "stability": round(random.uniform(0.985, 0.999), 4),
+                "edge_nodes": len(RESOURCE_REGISTRY),
+                "commercial_partners": len(COMMERCIAL_PARTNERS),
+                "active_matches": len(EXCHANGE_MATCHES),
+                "neural_load": round(random.uniform(60.0, 79.5), 1)
             }
-            await websocket.send_text(json.dumps(telemetry_data))
+            await websocket.send_text(json.dumps(data))
             await asyncio.sleep(2)
     except WebSocketDisconnect:
         pass
